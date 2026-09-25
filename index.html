@@ -171,6 +171,9 @@
         border-radius: 10px;
       }
       .card { border-radius: 12px; }
+      .candidates { grid-template-columns: 1fr; }
+      .vote-btn { max-width: none; }
+      .progress { max-width: none; }
       .overlay {
         display: none;
         position: fixed;
@@ -181,11 +184,109 @@
       .overlay.show { display: block; }
     }
 
+    /* ===== 投票页 ===== */
+    .vote-title {
+      text-align: center;
+      font-size: clamp(1.2rem, 4vw, 1.7rem);
+      color: #fff;
+      margin-bottom: clamp(32px, 6vw, 48px);
+      line-height: 1.5;
+    }
+    .vote-title .em { color: var(--accent); }
+    .candidates {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(16px, 4vw, 32px);
+    }
+    .candidate {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: clamp(24px, 5vw, 40px) clamp(16px, 4vw, 24px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: all 0.3s;
+    }
+    .candidate.winner {
+      border-color: rgba(233,69,96,0.6);
+      box-shadow: 0 0 30px rgba(233,69,96,0.25);
+    }
+    .avatar {
+      width: clamp(120px, 30vw, 180px);
+      height: clamp(120px, 30vw, 180px);
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid rgba(255,255,255,0.15);
+      margin-bottom: 20px;
+      background: rgba(255,255,255,0.05);
+      transition: all 0.3s;
+    }
+    .candidate.winner .avatar { border-color: var(--accent); }
+    .candidate-name {
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: #fff;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .vote-count {
+      font-size: 0.9rem;
+      color: #999;
+      margin-bottom: 20px;
+      min-height: 1.5em;
+    }
+    .vote-count b { color: var(--accent); font-size: 1.1rem; }
+    .vote-btn {
+      font-family: inherit;
+      font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+      font-weight: bold;
+      color: #fff;
+      background: var(--accent);
+      border: none;
+      padding: 12px 32px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.25s;
+      -webkit-tap-highlight-color: transparent;
+      width: 100%;
+      max-width: 200px;
+    }
+    .vote-btn:hover:not(:disabled) { background: var(--accent-hover); transform: translateY(-2px); }
+    .vote-btn:active:not(:disabled) { transform: translateY(0); }
+    .vote-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .progress {
+      width: 100%;
+      max-width: 200px;
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+      margin-top: 16px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0;
+      background: var(--accent);
+      border-radius: 3px;
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .result-tip {
+      text-align: center;
+      margin-top: 32px;
+      font-size: 1rem;
+      color: var(--accent);
+      min-height: 1.6em;
+      font-weight: bold;
+    }
+
     /* ===== 电脑端：卡片悬停效果 ===== */
     @media (min-width: 1024px) {
       main { padding: 100px 40px; }
       .card { transition: all 0.3s; }
-      .card:hover {
+      .card:hover, .candidate:hover {
         border-color: rgba(233,69,96,0.4);
         transform: translateY(-2px);
         box-shadow: 0 12px 40px rgba(0,0,0,0.25);
@@ -204,6 +305,7 @@
       <a href="#home" class="active" data-page="home">首页</a>
       <a href="#contact" data-page="contact">联系我们</a>
       <a href="#doubt" data-page="doubt">质疑真实性</a>
+      <a href="#vote" data-page="vote">投票</a>
     </nav>
   </header>
 
@@ -240,6 +342,28 @@
         <h2>回应质疑</h2>
         <p>有人质疑我们组织的真实性，对此我们的回应很简单——<span class="highlight">真实性跟1225一个样</span>。</p>
       </div>
+    </section>
+
+    <!-- 投票 -->
+    <section class="page" id="vote">
+      <p class="vote-title">你<span class="em">觉得</span>下面哪个人是<span class="em">内鬼</span>？</p>
+      <div class="candidates">
+        <div class="candidate" data-id="0">
+          <img class="avatar" src="https://hunyuan-prod-1258344703.cos.ap-guangzhou.myqcloud.com/text2img/9a3fa8eeb55a63e267cc68295e12e609/20260507152523h0_7b94e9af7498642587200e4b1bc84e9a?q-sign-algorithm=sha1&q-ak=AKIDRl074nOsGdJ9zjMsCRWP3ShmgS3VtX4S&q-sign-time=1784083511%3B1815619511&q-key-time=1784083511%3B1815619511&q-header-list=host&q-url-param-list=&q-signature=8f17a91b89a1b515e88efda538dd7597debe8d58" alt="候选人 A">
+          <div class="candidate-name">候选人 A</div>
+          <div class="vote-count">票数：<b>0</b>（0%）</div>
+          <button class="vote-btn">投她一票</button>
+          <div class="progress"><div class="progress-bar"></div></div>
+        </div>
+        <div class="candidate" data-id="1">
+          <img class="avatar" src="https://hunyuan-prod-1258344703.cos.ap-guangzhou.myqcloud.com/text2img/736ee04d9a403f5b4a73ce0e665ffd74/20260507152524h0_872d68f79f90827bbd02ab6d8908aedc?q-sign-algorithm=sha1&q-ak=AKIDRl074nOsGdJ9zjMsCRWP3ShmgS3VtX4S&q-sign-time=1784083512%3B1815619512&q-key-time=1784083512%3B1815619512&q-header-list=host&q-url-param-list=&q-signature=b60d12de83e8e6aa7d0d764a24b9e10a9d71a2fd" alt="候选人 B">
+          <div class="candidate-name">候选人 B</div>
+          <div class="vote-count">票数：<b>0</b>（0%）</div>
+          <button class="vote-btn">投他一票</button>
+          <div class="progress"><div class="progress-bar"></div></div>
+        </div>
+      </div>
+      <div class="result-tip"></div>
     </section>
   </main>
 
@@ -282,6 +406,69 @@
     }
     hamburger.addEventListener('click', toggleMenu);
     overlay.addEventListener('click', closeMenu);
+
+    /* ===== 投票逻辑（纯前端，刷新即重置） ===== */
+    (function () {
+      const STORAGE_KEY = 'tgpo_vote';
+      const tip = document.querySelector('#vote .result-tip');
+      const candidateEls = Array.from(document.querySelectorAll('#vote .candidate'));
+      let votes = [0, 0];
+      let voted = false;
+
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+        if (saved && Array.isArray(saved.votes)) votes = saved.votes;
+        voted = !!(saved && saved.voted);
+      } catch (e) { /* 忽略 */ }
+
+      function persist() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ votes, voted })); } catch (e) {}
+      }
+
+      function render() {
+        const total = votes[0] + votes[1];
+        candidateEls.forEach((el, i) => {
+          const pct = total ? Math.round(votes[i] / total * 100) : 0;
+          el.querySelector('.vote-count').innerHTML = `票数：<b>${votes[i]}</b>（${pct}%）`;
+          el.querySelector('.progress-bar').style.width = pct + '%';
+        });
+      }
+
+      function finish() {
+        const [a, b] = votes;
+        let msg;
+        if (a === 0 && b === 0) msg = '还没有人投票，快来投出你的一票！';
+        else if (a === b) msg = '票数相同，双方都有内鬼嫌疑！';
+        else msg = (a > b ? '候选人 A' : '候选人 B') + ' 以更多票数被认定为内鬼！';
+        tip.textContent = msg;
+        candidateEls.forEach((el, i) => {
+          el.classList.toggle('winner', a !== b && (a > b ? i === 0 : i === 1));
+        });
+      }
+
+      function lock() {
+        candidateEls.forEach(el => {
+          el.querySelector('.vote-btn').textContent = '已投票';
+          el.querySelector('.vote-btn').disabled = true;
+        });
+        tip.textContent = '你已完成投票，每人限投一票。';
+      }
+
+      candidateEls.forEach((el, i) => {
+        el.querySelector('.vote-btn').addEventListener('click', () => {
+          if (voted) return;
+          votes[i]++;
+          voted = true;
+          persist();
+          render();
+          finish();
+          lock();
+        });
+      });
+
+      render();
+      if (voted) { finish(); lock(); }
+    })();
   </script>
 </body>
 </html>
