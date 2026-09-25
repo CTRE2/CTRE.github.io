@@ -197,6 +197,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: clamp(16px, 4vw, 32px);
+      margin-bottom: clamp(32px, 6vw, 48px);
     }
     .candidate {
       background: var(--card-bg);
@@ -211,10 +212,6 @@
       -webkit-backdrop-filter: blur(8px);
       transition: all 0.3s;
     }
-    .candidate.winner {
-      border-color: rgba(233,69,96,0.6);
-      box-shadow: 0 0 30px rgba(233,69,96,0.25);
-    }
     .avatar {
       width: clamp(120px, 30vw, 180px);
       height: clamp(120px, 30vw, 180px);
@@ -225,61 +222,87 @@
       background: rgba(255,255,255,0.05);
       transition: all 0.3s;
     }
-    .candidate.winner .avatar { border-color: var(--accent); }
     .candidate-name {
       font-size: clamp(1rem, 2.5vw, 1.2rem);
       color: #fff;
       font-weight: bold;
       margin-bottom: 6px;
     }
-    .vote-count {
-      font-size: 0.9rem;
+    .candidate-desc {
+      font-size: 0.85rem;
       color: #999;
-      margin-bottom: 20px;
-      min-height: 1.5em;
+      line-height: 1.6;
     }
-    .vote-count b { color: var(--accent); font-size: 1.1rem; }
-    .vote-btn {
-      font-family: inherit;
-      font-size: clamp(0.95rem, 2.5vw, 1.05rem);
-      font-weight: bold;
-      color: #fff;
-      background: var(--accent);
-      border: none;
-      padding: 12px 32px;
-      border-radius: 30px;
-      cursor: pointer;
-      transition: all 0.25s;
-      -webkit-tap-highlight-color: transparent;
-      width: 100%;
-      max-width: 200px;
-    }
-    .vote-btn:hover:not(:disabled) { background: var(--accent-hover); transform: translateY(-2px); }
-    .vote-btn:active:not(:disabled) { transform: translateY(0); }
-    .vote-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .progress {
-      width: 100%;
-      max-width: 200px;
-      height: 6px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 3px;
-      margin-top: 16px;
+    .poll-embed {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: clamp(16px, 4vw, 24px);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       overflow: hidden;
     }
-    .progress-bar {
-      height: 100%;
-      width: 0;
-      background: var(--accent);
-      border-radius: 3px;
-      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .result-tip {
-      text-align: center;
-      margin-top: 32px;
+    .poll-embed-title {
       font-size: 1rem;
-      color: var(--accent);
-      min-height: 1.6em;
+      color: #fff;
       font-weight: bold;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .poll-embed-title .em { color: var(--accent); }
+    .poll-frame {
+      width: 100%;
+      height: 620px;
+      border: none;
+      border-radius: 12px;
+      background: #fff;
+      display: block;
+    }
+    /* 调试提示：加载失败时在框内显示一条红色提示，方便排查 */
+    .poll-debug {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: rgba(255, 47, 89, 0.12);
+      border: 1px dashed rgba(255, 47, 89, 0.6);
+      color: #ff8fa3;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      word-break: break-all;
+    }
+    .poll-debug code {
+      background: rgba(0,0,0,0.35);
+      padding: 1px 6px;
+      border-radius: 4px;
+      color: #ffb3c1;
+    }
+    @media (max-width: 640px) {
+      .poll-frame { height: 660px; }
+    }
+    .poll-fallback {
+      margin-top: 16px;
+      padding: 14px 16px;
+      background: rgba(233,69,96,0.08);
+      border: 1px solid rgba(233,69,96,0.3);
+      border-radius: 12px;
+      font-size: 0.9rem;
+      color: #ccc;
+      text-align: center;
+      line-height: 1.7;
+    }
+    .poll-fallback a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid currentColor;
+      word-break: break-all;
+    }
+    .poll-fallback a:hover { opacity: 0.8; }
+    .poll-note {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #666;
+      line-height: 1.6;
     }
 
     /* ===== 电脑端：卡片悬停效果 ===== */
@@ -363,7 +386,22 @@
           <div class="progress"><div class="progress-bar"></div></div>
         </div>
       </div>
-      <div class="result-tip"></div>
+
+      <div class="poll-embed">
+        <div class="poll-embed-title">在这里<span class="em">直接投票</span>，结果实时同步</div>
+        <iframe class="poll-frame"
+                src="https://strawpoll.com/embed/e6Z2AxYdEgN"
+                title="你觉得下面哪个人是内鬼？"
+                loading="lazy"
+                referrerpolicy="no-referrer">
+        </iframe>
+        <div class="poll-fallback">
+          如果上方投票框没显示，点这里去 StrawPoll 原页面投票：<br>
+          <a href="https://strawpoll.com/e6Z2AxYdEgN" target="_blank" rel="noopener noreferrer">strawpoll.com/e6Z2AxYdEgN</a>
+        </div>
+      </div>
+
+      <p class="poll-note">※ 本页已接入真实投票（StrawPoll），你的每一票都会实时计入总数，所有人看到的票数一致。</p>
     </section>
   </main>
 
@@ -407,68 +445,9 @@
     hamburger.addEventListener('click', toggleMenu);
     overlay.addEventListener('click', closeMenu);
 
-    /* ===== 投票逻辑（纯前端，刷新即重置） ===== */
-    (function () {
-      const STORAGE_KEY = 'tgpo_vote';
-      const tip = document.querySelector('#vote .result-tip');
-      const candidateEls = Array.from(document.querySelectorAll('#vote .candidate'));
-      let votes = [0, 0];
-      let voted = false;
-
-      try {
-        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
-        if (saved && Array.isArray(saved.votes)) votes = saved.votes;
-        voted = !!(saved && saved.voted);
-      } catch (e) { /* 忽略 */ }
-
-      function persist() {
-        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ votes, voted })); } catch (e) {}
-      }
-
-      function render() {
-        const total = votes[0] + votes[1];
-        candidateEls.forEach((el, i) => {
-          const pct = total ? Math.round(votes[i] / total * 100) : 0;
-          el.querySelector('.vote-count').innerHTML = `票数：<b>${votes[i]}</b>（${pct}%）`;
-          el.querySelector('.progress-bar').style.width = pct + '%';
-        });
-      }
-
-      function finish() {
-        const [a, b] = votes;
-        let msg;
-        if (a === 0 && b === 0) msg = '还没有人投票，快来投出你的一票！';
-        else if (a === b) msg = '票数相同，双方都有内鬼嫌疑！';
-        else msg = (a > b ? '候选人 A' : '候选人 B') + ' 以更多票数被认定为内鬼！';
-        tip.textContent = msg;
-        candidateEls.forEach((el, i) => {
-          el.classList.toggle('winner', a !== b && (a > b ? i === 0 : i === 1));
-        });
-      }
-
-      function lock() {
-        candidateEls.forEach(el => {
-          el.querySelector('.vote-btn').textContent = '已投票';
-          el.querySelector('.vote-btn').disabled = true;
-        });
-        tip.textContent = '你已完成投票，每人限投一票。';
-      }
-
-      candidateEls.forEach((el, i) => {
-        el.querySelector('.vote-btn').addEventListener('click', () => {
-          if (voted) return;
-          votes[i]++;
-          voted = true;
-          persist();
-          render();
-          finish();
-          lock();
-        });
-      });
-
-      render();
-      if (voted) { finish(); lock(); }
-    })();
+    /* ===== 投票页已接入 StrawPoll，由 iframe 承载真实投票 ===== */
+    /* （无本地脚本逻辑） */
+    console.log('投票由 StrawPoll 提供：https://strawpoll.com/embed/e6Z2AxYdEgN');
   </script>
 </body>
 </html>
