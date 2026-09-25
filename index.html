@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>同人游戏保护组织</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --accent: #e94560;
+      --accent-hover: #ff6b81;
+      --card-bg: rgba(255,255,255,0.06);
+      --border: rgba(255,255,255,0.1);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      background-attachment: fixed;
+      color: #e8e8e8;
+      min-height: 100vh;
+      line-height: 1.8;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ===== 头部 / 导航 ===== */
+    header {
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 16px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      font-weight: bold;
+      color: var(--accent);
+      letter-spacing: 1px;
+      white-space: nowrap;
+    }
+    nav { display: flex; align-items: center; }
+    nav a {
+      color: #ccc;
+      text-decoration: none;
+      margin-left: clamp(8px, 2vw, 30px);
+      font-size: clamp(0.9rem, 2vw, 1rem);
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: all 0.3s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    nav a:hover, nav a.active {
+      color: #fff;
+      background: rgba(233,69,96,0.3);
+    }
+
+    /* 汉堡按钮：仅手机端显示 */
+    .hamburger {
+      display: none;
+      width: 40px; height: 40px;
+      border: none; background: transparent;
+      cursor: pointer;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .hamburger span {
+      display: block;
+      width: 22px; height: 2px;
+      background: #ccc;
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ===== 主体 ===== */
+    main {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: clamp(40px, 8vw, 80px) clamp(16px, 5vw, 24px);
+    }
+    .page { display: none; animation: fadeIn 0.5s ease; }
+    .page.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-size: clamp(1.6rem, 5vw, 2.6rem);
+      color: #fff;
+      margin-bottom: 16px;
+      text-align: center;
+      line-height: 1.4;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: clamp(0.95rem, 3vw, 1.15rem);
+      color: var(--accent);
+      margin-bottom: clamp(40px, 8vw, 60px);
+      font-weight: 500;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: clamp(24px, 5vw, 40px);
+      margin-bottom: 24px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .card h2 {
+      color: var(--accent);
+      margin-bottom: 20px;
+      font-size: clamp(1.2rem, 3.5vw, 1.5rem);
+    }
+    .card p {
+      font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+      color: #ccc;
+      margin-bottom: 16px;
+    }
+    .highlight { color: #fff; font-weight: bold; }
+
+    footer {
+      text-align: center;
+      padding: 24px 16px;
+      color: #666;
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ===== 手机端：汉堡菜单 + 抽屉 ===== */
+    @media (max-width: 640px) {
+      .hamburger { display: flex; }
+      nav {
+        position: fixed;
+        top: 0; right: 0;
+        width: 70%;
+        max-width: 280px;
+        height: 100vh;
+        background: rgba(15,15,35,0.98);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        padding: 80px 24px 40px;
+        gap: 8px;
+        transform: translateX(100%);
+        transition: transform 0.35s ease;
+        box-shadow: -8px 0 30px rgba(0,0,0,0.4);
+      }
+      nav.open { transform: translateX(0); }
+      nav a {
+        margin: 0;
+        padding: 14px 18px;
+        font-size: 1rem;
+        border-radius: 10px;
+      }
+      .card { border-radius: 12px; }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 90;
+      }
+      .overlay.show { display: block; }
+    }
+
+    /* ===== 电脑端：卡片悬停效果 ===== */
+    @media (min-width: 1024px) {
+      main { padding: 100px 40px; }
+      .card { transition: all 0.3s; }
+      .card:hover {
+        border-color: rgba(233,69,96,0.4);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">同人游戏保护组织</div>
+    <button class="hamburger" id="hamburger" aria-label="菜单">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="overlay" id="overlay"></div>
+    <nav id="nav">
+      <a href="#home" class="active" data-page="home">首页</a>
+      <a href="#contact" data-page="contact">联系我们</a>
+      <a href="#doubt" data-page="doubt">质疑真实性</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- 首页 -->
+    <section class="page active" id="home">
+      <h1>欢迎来到同人游戏保护组织名下的网页</h1>
+      <p class="subtitle">我们的口号是同人创作不容侵犯，疑似造反统统完蛋</p>
+      <div class="card">
+        <h2>关于我们</h2>
+        <p><span class="highlight">同人游戏保护组织</span> 专门为保护同人游戏而成立，致力于维护同人创作者的合法权益与创作自由。</p>
+        <p>我们深知同人游戏是创作者热情与才华的结晶，因此始终站在保护第一线，<span class="highlight">严重打击造反人群</span>，坚决抵制任何侵犯同人创作的行为。</p>
+        <p>同人创作不容侵犯，这是我们不变的信念。任何试图破坏、抄袭、盗用同人游戏成果的行为，都将受到我们的严厉打击。</p>
+      </div>
+    </section>
+
+    <!-- 联系我们 -->
+    <section class="page" id="contact">
+      <h1>联系我们</h1>
+      <p class="subtitle">去中心化管理 · 多渠道触达</p>
+      <div class="card">
+        <h2>我们的联系方式</h2>
+        <p>我们的组织采用 <span class="highlight">去中心化管理</span>，没有单一的中心节点，成员分布广泛、各自独立运作。</p>
+        <p>因此，你可以通过 <span class="highlight">不同渠道</span> 联系我们，无论是社交媒体、即时通讯工具，还是各大同人创作平台，都能找到我们的身影。</p>
+        <p>无论你有合作意向、举报线索，还是想加入我们，都欢迎随时联络。我们会在各个渠道保持活跃，确保每一条信息都能被及时接收。</p>
+      </div>
+    </section>
+
+    <!-- 质疑真实性 -->
+    <section class="page" id="doubt">
+      <h1>质疑真实性</h1>
+      <p class="subtitle">关于我们真实性的说明</p>
+      <div class="card">
+        <h2>回应质疑</h2>
+        <p>有人质疑我们组织的真实性，对此我们的回应很简单——<span class="highlight">真实性跟1225一个样</span>。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © 同人游戏保护组织 · 同人创作不容侵犯
+  </footer>
+
+  <script>
+    const links = document.querySelectorAll('nav a');
+    const pages = document.querySelectorAll('.page');
+    const hamburger = document.getElementById('hamburger');
+    const nav = document.getElementById('nav');
+    const overlay = document.getElementById('overlay');
+
+    function switchPage(target) {
+      links.forEach(l => l.classList.remove('active'));
+      const activeLink = document.querySelector(`nav a[data-page="${target}"]`);
+      if (activeLink) activeLink.classList.add('active');
+      pages.forEach(p => p.classList.toggle('active', p.id === target));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        switchPage(link.dataset.page);
+        closeMenu();
+      });
+    });
+
+    function closeMenu() {
+      hamburger.classList.remove('open');
+      nav.classList.remove('open');
+      overlay.classList.remove('show');
+    }
+    function toggleMenu() {
+      hamburger.classList.toggle('open');
+      nav.classList.toggle('open');
+      overlay.classList.toggle('show');
+    }
+    hamburger.addEventListener('click', toggleMenu);
+    overlay.addEventListener('click', closeMenu);
+  </script>
+</body>
+</html>
