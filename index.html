@@ -305,87 +305,36 @@
       line-height: 1.6;
     }
 
-    /* ===== 反馈页 ===== */
-    .fb-label {
-      display: block;
-      font-size: 0.95rem;
-      color: #ccc;
-      margin-bottom: 12px;
-    }
-    .fb-input {
+    /* ===== 反馈页：Tally 嵌入 ===== */
+    .tally-embed { overflow: hidden; }
+    .tally-frame {
       width: 100%;
-      min-height: 200px;
-      padding: 16px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: rgba(0,0,0,0.25);
-      color: #fff;
-      font-size: 1rem;
-      font-family: inherit;
-      line-height: 1.8;
-      resize: vertical;
-      outline: none;
-      -webkit-tap-highlight-color: transparent;
-      transition: border-color 0.25s, box-shadow 0.25s;
-    }
-    .fb-input::placeholder { color: #666; }
-    .fb-input:focus {
-      border-color: rgba(233,69,96,0.6);
-      box-shadow: 0 0 0 3px rgba(233,69,96,0.15);
-    }
-    .fb-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 12px;
-      font-size: 0.85rem;
-      color: #888;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .fb-btn {
-      margin-top: 24px;
-      width: 100%;
-      padding: 16px 24px;
+      height: 620px;
       border: none;
       border-radius: 12px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
-      color: #fff;
-      font-size: 1.1rem;
-      font-weight: bold;
-      cursor: pointer;
-      letter-spacing: 2px;
-      -webkit-tap-highlight-color: transparent;
-      transition: all 0.25s;
+      background: rgba(255,255,255,0.02);
+      display: block;
     }
-    .fb-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(233,69,96,0.4); }
-    .fb-btn:active { transform: translateY(0); }
-    .fb-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-    .fb-msg {
-      margin-top: 20px;
-      padding: 14px 18px;
+    .tally-fallback {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: rgba(233,69,96,0.08);
+      border: 1px solid rgba(233,69,96,0.3);
       border-radius: 10px;
-      font-size: 0.95rem;
+      font-size: 0.85rem;
+      color: #ccc;
       text-align: center;
-      display: none;
-      line-height: 1.7;
-      animation: fadeIn 0.4s ease;
+      line-height: 1.6;
     }
-    .fb-msg.show { display: block; }
-    .fb-msg.ok {
-      background: rgba(46,160,67,0.15);
-      border: 1px solid rgba(46,160,67,0.4);
-      color: #7ee787;
+    .tally-fallback a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid currentColor;
+      word-break: break-all;
     }
-    .fb-msg.warn {
-      background: rgba(233,69,96,0.12);
-      border: 1px solid rgba(233,69,96,0.35);
-      color: #ff8fa3;
+    .tally-fallback a:hover { opacity: 0.8; }
+    @media (max-width: 640px) {
+      .tally-frame { height: 700px; }
     }
 
     /* ===== 电脑端：卡片悬停效果 ===== */
@@ -494,17 +443,19 @@
       <p class="subtitle">说出你的想法，我们都会看到</p>
       <div class="card">
         <h2>写下你的反馈</h2>
-        <label class="fb-label" for="feedbackInput">反馈内容</label>
-        <textarea id="feedbackInput"
-                  class="fb-input"
-                  placeholder="在这里输入你的反馈……"
-                  maxlength="1000"></textarea>
-        <div class="fb-meta">
-          <span id="feedbackCount">0 / 1000</span>
-          <span class="fb-tip">支持多行输入，按回车换行</span>
+        <div class="tally-embed">
+          <iframe class="tally-frame"
+                  src="https://tally.so/embed/D4QyWZ"
+                  loading="lazy"
+                  frameborder="0"
+                  allowfullscreen
+                  title="意见反馈表单">
+          </iframe>
+          <div class="tally-fallback">
+            表单未加载？
+            <a href="https://tally.so/r/D4QyWZ" target="_blank" rel="noopener noreferrer">点此前往 Tally 原页面填写</a>
+          </div>
         </div>
-        <button id="feedbackSubmit" class="fb-btn">提交反馈</button>
-        <div id="feedbackMsg" class="fb-msg"></div>
       </div>
     </section>
   </main>
@@ -553,45 +504,9 @@
     /* （无本地脚本逻辑） */
     console.log('投票由 StrawPoll 提供：https://strawpoll.com/embed/e6Z2AxYdEgN');
 
-    /* ===== 反馈页：本地模拟提交 ===== */
-    (function () {
-      const input = document.getElementById('feedbackInput');
-      const count = document.getElementById('feedbackCount');
-      const submit = document.getElementById('feedbackSubmit');
-      const msg = document.getElementById('feedbackMsg');
-      const MAX = 1000;
-
-      if (!input) return;
-
-      // 实时字数统计
-      function updateCount() {
-        count.textContent = input.value.length + ' / ' + MAX;
-      }
-      input.addEventListener('input', updateCount);
-
-      submit.addEventListener('click', function () {
-        const text = input.value.trim();
-        if (!text) {
-          msg.className = 'fb-msg warn show';
-          msg.textContent = '请先写下你的反馈再提交哦~';
-          return;
-        }
-        // 模拟提交中
-        submit.disabled = true;
-        submit.textContent = '提交中…';
-        msg.className = 'fb-msg';
-        msg.classList.remove('show');
-
-        setTimeout(function () {
-          submit.disabled = false;
-          submit.textContent = '提交反馈';
-          input.value = '';
-          updateCount();
-          msg.className = 'fb-msg ok show';
-          msg.textContent = '已收到！你的反馈已经交给 1225，我们会认真查看的，感谢支持同人创作不容侵犯 ❤';
-        }, 700);
-      });
-    })();
+    /* ===== 反馈页：由 Tally 嵌入框接管提交 ===== */
+    /* （无本地脚本逻辑） */
+    console.log('反馈表单由 Tally 提供：https://tally.so/embed/D4QyWZ');
   </script>
 </body>
 </html>
